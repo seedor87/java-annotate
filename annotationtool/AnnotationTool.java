@@ -299,9 +299,9 @@ public class AnnotationTool extends JFrame {
                 if (ge.getDefaultScreenDevice().isWindowTranslucencySupported(
                         GraphicsDevice.WindowTranslucency.TRANSLUCENT)) {
 
-                    ControllerBox controllerBox = new ControllerBox(
-                            new AnnotationTool(x, y, w, h)
-                    );
+                    AnnotationTool annotationTool= new AnnotationTool(x, y, w, h);
+                    annotationTool.setBackground(new Color(0,0,0, 64));
+                    ControllerBox controllerBox = new ControllerBox(annotationTool);
                     controllerBox.setBounds(x + w + 10, y, 0, 0);
                     controllerBox.pack();
                     controllerBox.setVisible(true);
