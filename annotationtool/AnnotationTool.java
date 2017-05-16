@@ -1,21 +1,6 @@
 package annotationtool;
 
-import java.awt.AWTEvent;
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
@@ -54,7 +39,7 @@ public class AnnotationTool extends JFrame {
 
     private Image backingMain;
     private Image backingScratch;
-    private static Color clearPaint = new Color(0, 0, 0, 0);
+    private static Color clearPaint = new Color(255, 255, 255);
 
     private Paint paint;
     private Stroke stroke;
@@ -83,12 +68,12 @@ public class AnnotationTool extends JFrame {
             Image image = ImageIO.read(imageStream);
             pencilCursor = toolkit.createCustomCursor(image, new Point(0, 26), "pencil");
             defaultCursor = getCursor();
-//            setCursor(pencilCursor);
+//            setCursor(pencilCursor);    // set cursor to pencil shape
         } catch (IOException ioe) {
             ioe.printStackTrace(System.err);
         }
 
-        setBounds(x - 5, y - 5, w + 10, h + 10);
+        setBounds(x - 0, y - 0, w + 10, h + 10);
 
         Stroke blockOutStroke;
         Path2D.Float blockOutShape;
@@ -157,32 +142,18 @@ public class AnnotationTool extends JFrame {
 
     public void doSave() {
         // find filename for use
-        File outFile;
-        String fname;
-        do {
-            fname = String.format("image-%06d.png", saveImageIndex++);
-            System.out.println("Trying " + fname);
-            outFile = new File(fname);
-        } while (outFile.exists());
-
-        String imageTag = "<img src='" + fname +"'>";
-        Clipboard clip = this.getToolkit().getSystemClipboard();
-        clip.setContents(new StringSelection(imageTag), clipboardOwner);
-        System.out.println(imageTag);
-        
         try {
-            BufferedImage outImg = null;
-            if (backingMain instanceof BufferedImage) {
-                outImg = (BufferedImage) backingMain;
-            } else if (backingMain instanceof ToolkitImage) {
-                outImg = ((ToolkitImage) backingMain).getBufferedImage();
-            } else {
-                System.err.println("Hmm, not one of those two...");
-            }
+            Robot robot = new Robot();
+            String format = "jpg";
+            String fileName = String.format("image-%06d.", saveImageIndex++) + format;
 
-            ImageIO.write(outImg, "png", outFile);
-        } catch (IOException ex) {
-            System.err.println("Save failed: " + ex.getMessage());
+            Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+            BufferedImage screenFullImage = robot.createScreenCapture(screenRect);
+            ImageIO.write(screenFullImage, format, new File(fileName));
+
+            System.out.println("A full screenshot saved!");
+        } catch (AWTException | IOException ex) {
+            System.err.println(ex);
         }
     }
 
@@ -301,16 +272,15 @@ public class AnnotationTool extends JFrame {
 
                 // check if the OS supports translucency
                 if (ge.getDefaultScreenDevice().isWindowTranslucencySupported(
-                        GraphicsDevice.WindowTranslucency.TRANSLUCENT)) {
-
+                        GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSLUCENT)) {
 
                     AnnotationTool annotationTool= new AnnotationTool(x, y, w, h);
-                    annotationTool.setBackground(new Color(255, 255, 255));
 
                     ControllerBox controllerBox = new ControllerBox(annotationTool);
                     controllerBox.setBounds(x + w + 10, y, 0, 0);
                     controllerBox.pack();
                     controllerBox.setVisible(true);
+                    controllerBox.setAlwaysOnTop(true);
                 }
             }
         });

@@ -252,6 +252,7 @@ class ControllerBox extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 annotationTool.toFront();
                 annotationTool.setAlwaysOnTop(true);
+                toFront();
             }
         });
         add(bringToTop, gbcb.build());
