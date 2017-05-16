@@ -33,6 +33,8 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+
+import com.sun.awt.AWTUtilities;
 import sun.awt.image.ToolkitImage;
 
 public class AnnotationTool extends JFrame {
@@ -98,6 +100,8 @@ public class AnnotationTool extends JFrame {
 
         // make the window transparent
         setBackground(clearPaint);
+        AWTUtilities.setWindowOpacity(this, 0.05f);
+
 
         setPreferredSize(new Dimension(w + 10, h + 10));
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -299,8 +303,10 @@ public class AnnotationTool extends JFrame {
                 if (ge.getDefaultScreenDevice().isWindowTranslucencySupported(
                         GraphicsDevice.WindowTranslucency.TRANSLUCENT)) {
 
+
                     AnnotationTool annotationTool= new AnnotationTool(x, y, w, h);
-                    annotationTool.setBackground(new Color(0,0,0, 64));
+                    annotationTool.setBackground(new Color(255, 255, 255));
+
                     ControllerBox controllerBox = new ControllerBox(annotationTool);
                     controllerBox.setBounds(x + w + 10, y, 0, 0);
                     controllerBox.pack();
