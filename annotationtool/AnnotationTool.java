@@ -37,7 +37,8 @@ import sun.awt.image.ToolkitImage;
 
 public class AnnotationTool extends JFrame {
 
-    private class ShapeDef {
+    private class ShapeDef
+    {
 
         Shape shape;
         Paint paint;
@@ -99,15 +100,7 @@ public class AnnotationTool extends JFrame {
         // make the window transparent
         setBackground(clearPaint);
 
-        setPreferredSize(new Dimension(w + 10, h + 10));
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        enableEvents(AWTEvent.KEY_EVENT_MASK
-                + AWTEvent.MOUSE_EVENT_MASK
-                + AWTEvent.MOUSE_MOTION_EVENT_MASK);
-        setVisible(true);
-
-        backingMain = createImage(w, h);
-        backingScratch = createImage(w, h);
+        backingScratch = new BufferedImage(w,h,BufferedImage.TRANSLUCENT);//createImage(w, h);
 
         Path2D.Float borderShape = new Path2D.Float();
         borderShape.moveTo(0, 0);
@@ -119,6 +112,35 @@ public class AnnotationTool extends JFrame {
                 new BasicStroke(10, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER),
                 new Color(255, 128, 0, 255),
                 borderShape);
+
+        setPreferredSize(new Dimension(w + 10, h + 10));
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        enableEvents(AWTEvent.KEY_EVENT_MASK
+                + AWTEvent.MOUSE_EVENT_MASK
+                + AWTEvent.MOUSE_MOTION_EVENT_MASK);
+        setVisible(true);
+
+        backingMain = createImage(w, h);
+        /*
+        @return an off-screen drawable image, which can be used for double buffering.
+        The return value may be null if the component is not displayable.
+        This will always happen if GraphicsEnvironment.isHeadless() returns true.
+        */
+       // backingScratch = createImage(w, h);
+
+      //  backingScratch = new BufferedImage(w,h,BufferedImage.TRANSLUCENT);//createImage(w, h);
+
+
+/*        Path2D.Float borderShape = new Path2D.Float();
+        borderShape.moveTo(0, 0);
+        borderShape.lineTo(w + 10, 0);
+        borderShape.lineTo(w + 10, h + 10);
+        borderShape.lineTo(0, h + 10);
+        borderShape.closePath();
+        border = new ShapeDef(
+                new BasicStroke(10, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER),
+                new Color(255, 128, 0, 255),
+                borderShape);*/
     }
 
     public void setPaint(Paint paint) {
@@ -270,19 +292,24 @@ public class AnnotationTool extends JFrame {
         }
     }
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args)
+    {
         System.err.println("Annoation tool by simon@dancingcloudservices.com");
         System.err.println("Icons by www.iconfinder.com");
         int x1 = 50, y1 = 50, w1 = 1280, h1 = 720;
-        if (args.length == 2 || args.length == 4) {
+        if (args.length == 2 || args.length == 4)
+        {
             w1 = Integer.parseInt(args[0]);
             h1 = Integer.parseInt(args[1]);
-            if (args.length == 4) {
+            if (args.length == 4)
+            {
                 x1 = Integer.parseInt(args[2]);
                 y1 = Integer.parseInt(args[3]);
             }
             System.out.println("AnnotationTool " + w1 + " by " + h1 + " offset: " + x1 + "," + y1);
-        } else if (args.length != 0) {
+        }
+        else if (args.length != 0)
+        {
             System.err.println("Usage: java annotationtool.AnnotationTool "
                     + "[<width> <height> [ <x> <y>]]"
                     + "\nUsing defaults 1280 720 50 50");
@@ -291,13 +318,15 @@ public class AnnotationTool extends JFrame {
         // Create the GUI on the event-dispatching thread
         SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run() {
+            public void run()
+            {
                 GraphicsEnvironment ge = GraphicsEnvironment
                         .getLocalGraphicsEnvironment();
 
                 // check if the OS supports translucency
                 if (ge.getDefaultScreenDevice().isWindowTranslucencySupported(
-                        GraphicsDevice.WindowTranslucency.TRANSLUCENT)) {
+                        GraphicsDevice.WindowTranslucency.TRANSLUCENT))
+                {
 
                     AnnotationTool annotationTool= new AnnotationTool(x, y, w, h);
                     annotationTool.setBackground(new Color(0,0,0, 64));
