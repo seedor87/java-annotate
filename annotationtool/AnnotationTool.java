@@ -106,7 +106,7 @@ public class AnnotationTool extends JFrame {
         borderShape.closePath();
         border = new ShapeDef(
                 new BasicStroke(10, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER),
-                new Color(255, 128, 0, 255),
+                new Color(0, 0, 0, 255),
                 borderShape);
     }
 
@@ -246,8 +246,8 @@ public class AnnotationTool extends JFrame {
     }
 
     public static void main(final String[] args) {
-        System.err.println("Annoation tool by simon@dancingcloudservices.com");
-        System.err.println("Icons by www.iconfinder.com");
+//        System.err.println("Annoation tool by simon@dancingcloudservices.com");
+//        System.err.println("Icons by www.iconfinder.com");
         int x1 = 50, y1 = 50, w1 = 1280, h1 = 720;
         if (args.length == 2 || args.length == 4) {
             w1 = Integer.parseInt(args[0]);
