@@ -39,7 +39,7 @@ public class AnnotationTool extends JFrame {
 
     private Image backingMain;
     private Image backingScratch;
-    private static Color clearPaint = new Color(255, 255, 255);
+    private static Color clearPaint = new Color(0f, 0f, 0f, .05f);
 
     private Paint paint;
     private Stroke stroke;
@@ -85,8 +85,8 @@ public class AnnotationTool extends JFrame {
 
         // make the window transparent
         setBackground(clearPaint);
-        AWTUtilities.setWindowOpacity(this, 0.05f);
-
+        getContentPane().setBackground(clearPaint);
+        AWTUtilities.setWindowOpaque(this, false);
 
         setPreferredSize(new Dimension(w + 10, h + 10));
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -106,7 +106,7 @@ public class AnnotationTool extends JFrame {
         borderShape.closePath();
         border = new ShapeDef(
                 new BasicStroke(10, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER),
-                new Color(0, 0, 0, 255),
+                new Color(255, 128, 0, 255),
                 borderShape);
     }
 
@@ -160,28 +160,33 @@ public class AnnotationTool extends JFrame {
     @Override
     public void paint(Graphics graphics) {
         // Blank out the scratch image
-        Graphics2D gScratch = (Graphics2D) backingScratch.getGraphics();
-        gScratch.setComposite(AlphaComposite.Src);
-        gScratch.setBackground(clearPaint);
-        gScratch.clearRect(0, 0, this.getBounds().width, this.getBounds().height);
-        gScratch.drawImage(backingMain, 0, 0, null);
-
-        // if there is a "shape in progress" draw it on the scratch image
-        if (p2d != null) {
-            gScratch.setPaint(paint);
-            gScratch.setStroke(stroke);
-            gScratch.draw(p2d);
-        }
+    	if(backingScratch != null) {
+    		Graphics2D gScratch = (Graphics2D) backingScratch.getGraphics();
+    		gScratch.setComposite(AlphaComposite.Src.derive(1f));
+    		gScratch.setBackground(clearPaint);
+    		gScratch.setColor(clearPaint);
+    		gScratch.clearRect(0, 0, this.getBounds().width, this.getBounds().height);
+    		gScratch.drawImage(backingMain, 0, 0, null);
+    		
+    		// if there is a "shape in progress" draw it on the scratch image
+    		if (p2d != null) {
+    			gScratch.setPaint(paint);
+    			gScratch.setStroke(stroke);
+    			gScratch.draw(p2d);
+    		}
+    	}
 
         Graphics2D g = (Graphics2D) graphics;
-        g.setComposite(AlphaComposite.Src);
+        g.setComposite(AlphaComposite.SrcOver.derive(.05f));
         AffineTransform trans = g.getTransform();
         g.translate(5, 5);
         g.drawImage(backingScratch, 0, 0, null);
         g.setTransform(trans);
-        g.setPaint(border.paint);
-        g.setStroke(border.stroke);
-        g.draw(border.shape);
+        if(border != null) {
+        	g.setPaint(border.paint);
+        	g.setStroke(border.stroke);
+        	g.draw(border.shape);
+        }
     }
 
     private Path2D.Float p2d; // shape in progress...
@@ -246,8 +251,8 @@ public class AnnotationTool extends JFrame {
     }
 
     public static void main(final String[] args) {
-//        System.err.println("Annoation tool by simon@dancingcloudservices.com");
-//        System.err.println("Icons by www.iconfinder.com");
+        System.err.println("Annoation tool by simon@dancingcloudservices.com");
+        System.err.println("Icons by www.iconfinder.com");
         int x1 = 50, y1 = 50, w1 = 1280, h1 = 720;
         if (args.length == 2 || args.length == 4) {
             w1 = Integer.parseInt(args[0]);
