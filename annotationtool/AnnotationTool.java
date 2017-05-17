@@ -54,6 +54,7 @@ public class AnnotationTool extends JFrame {
     private Image backingMain;
     private Image backingScratch;
     private static Color clearPaint = new Color(0, 0, 0, 0);
+    private static Color mostlyClearPaint = new Color(0f,0f,0f,0.1f);
 
     private Paint paint;
     private Stroke stroke;
@@ -68,6 +69,8 @@ public class AnnotationTool extends JFrame {
     private Cursor pencilCursor;
 
     private int saveImageIndex = 0;
+    
+    Path2D.Float borderShape;
 
     public AnnotationTool(int x, int y, int w, int h) {
 
@@ -101,8 +104,12 @@ public class AnnotationTool extends JFrame {
         setBackground(clearPaint);
 
         backingScratch = new BufferedImage(w,h,BufferedImage.TRANSLUCENT);//createImage(w, h);
-
-        Path2D.Float borderShape = new Path2D.Float();
+        backingMain = new BufferedImage(w,h,BufferedImage.TRANSLUCENT);//createImage(w, h);
+        Graphics2D gMain = (Graphics2D) backingMain.getGraphics();
+        gMain.setColor(mostlyClearPaint);
+        gMain.fillRect(0, 0, this.getBounds().width, this.getBounds().height);
+        
+        borderShape = new Path2D.Float();
         borderShape.moveTo(0, 0);
         borderShape.lineTo(w + 10, 0);
         borderShape.lineTo(w + 10, h + 10);
@@ -120,7 +127,6 @@ public class AnnotationTool extends JFrame {
                 + AWTEvent.MOUSE_MOTION_EVENT_MASK);
         setVisible(true);
 
-        backingMain = createImage(w, h);
         /*
         @return an off-screen drawable image, which can be used for double buffering.
         The return value may be null if the component is not displayable.
@@ -209,17 +215,20 @@ public class AnnotationTool extends JFrame {
         // Blank out the scratch image
         Graphics2D gScratch = (Graphics2D) backingScratch.getGraphics();
         gScratch.setComposite(AlphaComposite.Src);
-        gScratch.setBackground(clearPaint);
-        gScratch.clearRect(0, 0, this.getBounds().width, this.getBounds().height);
-        gScratch.drawImage(backingMain, 0, 0, null);
+        
 
+        gScratch.setPaint(mostlyClearPaint);
+        gScratch.setStroke(new BasicStroke(10));
+        gScratch.fill(borderShape);
+        gScratch.drawImage(backingMain, 0, 0, null);
+        
         // if there is a "shape in progress" draw it on the scratch image
         if (p2d != null) {
             gScratch.setPaint(paint);
             gScratch.setStroke(stroke);
             gScratch.draw(p2d);
         }
-
+        
         Graphics2D g = (Graphics2D) graphics;
         g.setComposite(AlphaComposite.Src);
         AffineTransform trans = g.getTransform();
