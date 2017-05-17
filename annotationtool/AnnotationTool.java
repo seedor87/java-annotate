@@ -69,7 +69,7 @@ public class AnnotationTool extends JFrame {
     private Cursor pencilCursor;
 
     private int saveImageIndex = 0;
-    
+
     Path2D.Float borderShape;
 
     public AnnotationTool(int x, int y, int w, int h) {
@@ -108,7 +108,7 @@ public class AnnotationTool extends JFrame {
         Graphics2D gMain = (Graphics2D) backingMain.getGraphics();
         gMain.setColor(mostlyClearPaint);
         gMain.fillRect(0, 0, this.getBounds().width, this.getBounds().height);
-        
+
         borderShape = new Path2D.Float();
         borderShape.moveTo(0, 0);
         borderShape.lineTo(w + 10, 0);
@@ -132,9 +132,9 @@ public class AnnotationTool extends JFrame {
         The return value may be null if the component is not displayable.
         This will always happen if GraphicsEnvironment.isHeadless() returns true.
         */
-       // backingScratch = createImage(w, h);
+        // backingScratch = createImage(w, h);
 
-      //  backingScratch = new BufferedImage(w,h,BufferedImage.TRANSLUCENT);//createImage(w, h);
+        //  backingScratch = new BufferedImage(w,h,BufferedImage.TRANSLUCENT);//createImage(w, h);
 
 
 /*        Path2D.Float borderShape = new Path2D.Float();
@@ -193,7 +193,7 @@ public class AnnotationTool extends JFrame {
         Clipboard clip = this.getToolkit().getSystemClipboard();
         clip.setContents(new StringSelection(imageTag), clipboardOwner);
         System.out.println(imageTag);
-        
+
         try {
             BufferedImage outImg = null;
             if (backingMain instanceof BufferedImage) {
@@ -215,20 +215,20 @@ public class AnnotationTool extends JFrame {
         // Blank out the scratch image
         Graphics2D gScratch = (Graphics2D) backingScratch.getGraphics();
         gScratch.setComposite(AlphaComposite.Src);
-        
+
 
         gScratch.setPaint(mostlyClearPaint);
         gScratch.setStroke(new BasicStroke(10));
         gScratch.fill(borderShape);
         gScratch.drawImage(backingMain, 0, 0, null);
-        
+
         // if there is a "shape in progress" draw it on the scratch image
         if (p2d != null) {
             gScratch.setPaint(paint);
             gScratch.setStroke(stroke);
             gScratch.draw(p2d);
         }
-        
+
         Graphics2D g = (Graphics2D) graphics;
         g.setComposite(AlphaComposite.Src);
         AffineTransform trans = g.getTransform();
@@ -260,9 +260,12 @@ public class AnnotationTool extends JFrame {
 
     private void paintFromUndoStack() {
         Graphics2D g = (Graphics2D) backingMain.getGraphics();
-        g.setBackground(clearPaint);
         g.setComposite(AlphaComposite.Src);
-        g.clearRect(0, 0, this.getBounds().width, this.getBounds().height);
+
+        g.setPaint(mostlyClearPaint);
+        g.setStroke(new BasicStroke(10));
+        g.fill(borderShape);
+
         Iterator<ShapeDef> sdi = undoStack.descendingIterator();
         while (sdi.hasNext()) {
             ShapeDef s = sdi.next();
@@ -270,6 +273,7 @@ public class AnnotationTool extends JFrame {
             g.setStroke(s.stroke);
             g.draw(s.shape);
         }
+
         repaint();
     }
 
