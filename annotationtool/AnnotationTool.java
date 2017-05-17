@@ -20,6 +20,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
@@ -70,12 +72,54 @@ public class AnnotationTool extends JFrame {
 
     private int saveImageIndex = 0;
 
-    Path2D.Float borderShape;
+    private Path2D.Float borderShape;
+
+    private boolean controlPressed = false;
+    private boolean zPressed = false;
+
+    private KeyListener keyListener = new KeyListener() {
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e)
+        {
+            if(e.isControlDown())
+            {
+                controlPressed = true;
+            }
+            if(e.getExtendedKeyCode() == e.VK_Z)
+            {
+                zPressed = true;
+            }
+            if(controlPressed && zPressed)
+            {
+                undo();
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e)
+        {
+            if(e.getExtendedKeyCode() == KeyEvent.VK_Z)
+            {
+                zPressed = false;
+            }
+            if(e.getExtendedKeyCode() == KeyEvent.VK_CONTROL)
+            {
+                controlPressed = false;
+            }
+
+        }
+    };
 
     public AnnotationTool(int x, int y, int w, int h) {
 
         super("Drawing Frame");
         setUndecorated(true);
+        this.addKeyListener(keyListener);
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
 
