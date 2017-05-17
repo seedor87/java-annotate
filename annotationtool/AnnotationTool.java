@@ -223,7 +223,7 @@ public class AnnotationTool extends JFrame {
     }
 
     public void doClear() {
-        doClear(clearPaint);
+        doClear(mostlyClearPaint);
     }
 
     public void clearHistory() {
