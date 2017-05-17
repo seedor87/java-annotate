@@ -74,10 +74,12 @@ public class AnnotationTool extends JFrame {
 
     private Path2D.Float borderShape;
 
-    private boolean controlPressed = false;
-    private boolean zPressed = false;
+    private KeyListener keyListener = new KeyListener()
+    {
+        private boolean controlPressed = false;
+        private boolean zPressed = false;
+        private boolean yPressed = false;
 
-    private KeyListener keyListener = new KeyListener() {
         @Override
         public void keyTyped(KeyEvent e) {
 
@@ -94,9 +96,17 @@ public class AnnotationTool extends JFrame {
             {
                 zPressed = true;
             }
+            if(e.getExtendedKeyCode() == e.VK_Y)
+            {
+                yPressed = true;
+            }
             if(controlPressed && zPressed)
             {
                 undo();
+            }
+            if(yPressed && controlPressed)
+            {
+                redo();
             }
         }
 
@@ -111,6 +121,11 @@ public class AnnotationTool extends JFrame {
             {
                 controlPressed = false;
             }
+            if(e.getExtendedKeyCode() == e.VK_Y)
+            {
+                yPressed = false;
+            }
+
 
         }
     };
