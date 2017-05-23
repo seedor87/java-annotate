@@ -1,19 +1,7 @@
 package annotationtool;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Paint;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -29,6 +17,40 @@ class ControllerBox extends JFrame {
 
     private AnnotationTool annotationTool;
     private static final int SWATCH_SIZE = 24;
+
+    private Point initialClick;
+    private ControllerBox thisBox = this;
+
+
+
+    private ComponentListener thisListener = new ComponentListener() {
+        @Override
+        public void componentResized(ComponentEvent e) {
+
+        }
+
+        @Override
+        public void componentMoved(ComponentEvent e)
+        {
+            annotationTool.setLocation(new Point(thisBox.getX() -1300, thisBox.getY()));
+
+        }
+
+        @Override
+        public void componentShown(ComponentEvent e)
+        {
+
+        }
+
+        @Override
+        public void componentHidden(ComponentEvent e)
+        {
+
+        }
+    };
+
+
+
 
     private static class SwatchIcon implements Icon {
 
@@ -104,6 +126,9 @@ class ControllerBox extends JFrame {
 
     public ControllerBox(AnnotationTool at) {
         super("Tools");
+
+        this.addComponentListener(thisListener);
+
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         annotationTool = at;
         setLayout(new GridBagLayout());
@@ -304,5 +329,6 @@ class ControllerBox extends JFrame {
         });
         gbcb.nextY();
     }
+
 
 }
